@@ -1,0 +1,47 @@
+[package]
+name = "rontest"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+ron="0.7.0"
+
+# Program terminated with signal SIGSEGV, Segmentation fault.
+# #0  core::fmt::Formatter::alternate () at /rustc/7737e0b5c4103216d6fd8cf941b7ab9bdbaace7c//library/core/src/fmt/mod.rs:1880
+# 1880    /rustc/7737e0b5c4103216d6fd8cf941b7ab9bdbaace7c//library/core/src/fmt/mod.rs: No such file or directory.
+# #0  core::fmt::Formatter::alternate () at /rustc/7737e0b5c4103216d6fd8cf941b7ab9bdbaace7c//library/core/src/fmt/mod.rs:1880
+# #1  core::fmt::Formatter::pad_integral () at /rustc/7737e0b5c4103216d6fd8cf941b7ab9bdbaace7c//library/core/src/fmt/mod.rs:1354
+# #2  0x0000aaabce502a24 in core::fmt::num::fmt_u128 ()
+#     at /rustc/7737e0b5c4103216d6fd8cf941b7ab9bdbaace7c//library/core/src/fmt/num.rs:641
+# #3  0x0000aaabce4ff1e4 in core::fmt::write () at /rustc/7737e0b5c4103216d6fd8cf941b7ab9bdbaace7c//library/core/src/fmt/mod.rs:1190
+# #4  0x0000aaabce4f6118 in std::io::Write::write_fmt (self=0xffffddb144c8, fmt=...)
+#     at /rustc/7737e0b5c4103216d6fd8cf941b7ab9bdbaace7c/library/std/src/io/mod.rs:1657
+# #5  0x0000aaabce4f6ea8 in <&mut ron::ser::Serializer<W> as serde::ser::Serializer>::serialize_u128 (self=0xffffddb144c8, v=0)
+#     at /home/epg/.cargo/registry/src/github.com-1ecc6299db9ec823/ron-0.7.0/src/ser/mod.rs:409
+# #6  0x0000aaabce4f6e20 in <&mut ron::ser::Serializer<W> as serde::ser::Serializer>::serialize_u64 (self=0xffffddb144c8, v=0)
+#     at /home/epg/.cargo/registry/src/github.com-1ecc6299db9ec823/ron-0.7.0/src/ser/mod.rs:405
+# #7  0x0000aaabce4f7638 in serde::ser::impls::<impl serde::ser::Serialize for u64>::serialize (self=0xffffddb14928, 
+#     serializer=0xffffddb144c8) at /home/epg/.cargo/registry/src/github.com-1ecc6299db9ec823/serde-1.0.137/src/ser/impls.rs:15
+# #8  0x0000aaabce4f702c in <&mut ron::ser::Serializer<W> as serde::ser::Serializer>::serialize_newtype_struct (self=0xffffddb144c8,
+#     name=..., value=0xffffddb14928) at /home/epg/.cargo/registry/src/github.com-1ecc6299db9ec823/ron-0.7.0/src/ser/mod.rs:506
+# #9  0x0000aaabce4f74a8 in rontest::_::<impl serde::ser::Serialize for rontest::Foo>::serialize (self=0xffffddb14928, 
+#     __serializer=0xffffddb144c8) at /home/epg/rontest/src/main.rs:1
+[profile.dev-lto-fat]
+inherits = "dev"
+lto = "fat"     # dev default is false
+
+# segv with same backtrace
+[profile.dev-lto-thin]
+inherits = "dev"
+lto = "thin"    # dev default is false
+
+[profile.dev-lto-thin-opt]
+inherits = "dev-lto-thin"
+# Raising this makes it not crash
+opt-level = 1
+
+[profile.dev-lto-fat-opt]
+inherits = "dev-lto-fat"
+# Raising this makes it not crash
+opt-level = 1
